@@ -18,8 +18,8 @@ This project is executed in Apache Spark cluster mode with a JupyterLab interfac
 | JuyterLab | localhost:8888| Cluster interface with built-in Jupyter notebooks | 
 | Spark Driver | localhost:4040| Spark Driver web ui | 
 | Spark Master | localhost:8080| Spark Master node | 
-| Spark Worker | localhost:8081| Spark Worker node with 2 core and 4GB of memory (default)| 
-| Spark Worker | localhost:8082| Spark Worker node with 2 core and 4GB of memory (default)| 
+| Spark Worker | localhost:8081| Spark Worker node with 2 core and 5GB of memory (default)| 
+| Spark Worker | localhost:8082| Spark Worker node with 2 core and 5GB of memory (default)| 
 
 ## Cluster execution
 1. Install *Docker* and *Docker Compose*
@@ -394,13 +394,13 @@ The study carried out so far has higlighted important aspects:
 
 - Features engineering and features selection were the most crucial phases of the project: from the 18 original fields, we selected only the relevant measures to user behavior and created 11 features. Then we further trimmed the data down to 9 feature with unique characteristics based on their correlations to train the models.
 
-- Cleaning and wrangling the data properly not only improves the model performance, but also make the pipeline more operational efficient and scalable. For Sparkify mini data, we aggregated 268k event-level records to 225 user-level records, with is 0.1% size of the raw data.
+- Cleaning and wrangling the data properly not only improves the model performance, but also make the pipeline more operational efficient and scalable. For Sparkify mini data, we aggregated 268k event-level records to 225 user-level records, which is 0.1% size of the raw data.
 
 - RF and GBT soffered the most the low amount of data available by showing high overfitting.
 
 - Upsampling methods turned out to be the best choices for RF and GBT in order to improve their performances. In particular SMOTE allowed RF and GBT to increase its F1 score up to 62% and 63% respectively.
 
-- Both weighting and resempling were crucial for the perfomances of SVM.  
+- Both weighting and resempling were crucial for the perfomances of SVM model.  
 
 # Main challenges encountered
 - Imbalanced class ratio
