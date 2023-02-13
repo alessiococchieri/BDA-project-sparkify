@@ -64,7 +64,7 @@ An alternative to using classification accuracy is to use precision and recall m
 
 Since our goal is to predict the users more likely to churn (postive class), **F1-score of positive class** has been considerend as main reference to select the best model for the current problem. 
 
-At the same time also AUC-PR turned out to be good indicator to evaluate the performances of the models. When working with imbalanced datasets in binary classification problems, it's often more appropriate to use the AUC-PR as a performance metric rather than the AUC-ROC. It provides a more accurate representation of the model's ability to correctly classify the minority class.
+At the same time also AUC-PR turned out to be a good indicator to evaluate the performances of the models. When working with imbalanced datasets in binary classification problems, it's often more appropriate to use the AUC-PR as a performance metric rather than the AUC-ROC. It provides a more accurate representation of the model's ability to correctly classify the minority class.
 
 # Feature analysis
 The 18 features can be divided into 3 different levels:
