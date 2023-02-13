@@ -208,3 +208,44 @@ In logistic regression for binary classification, the coefficients represent the
 <p align="center">
   <img src="img/coef-lr.png" height = 300 width = 300px>
 </p>
+
+# Handling imbalanced class ratio to improve the results
+Handling imbalanced datasets is a common challenge in machine learning. When dealing with significantly unbalanced dataset in the target label, it becomes harder for most machine learning algorithms to efficiently learn all classes. The training process might be indeed biased towards a certain class if the dataset distribution is poorly balanced.
+
+In this specific case, only about 23.11% of the data are labelled as churn (label=1).
+
+There are several ways to address this issue with PySpark and MLlib. We will focus on the following two approaches:
+
+- Resempling
+- Cost-based function (Weighting)
+
+## Resampling
+While the obvious and most desirable solution would be to collect more real data, oversampling and undersampling are techniques that may still come in handy in these situations. For both techniques there is a naive approach that is the random oversampling (undersampling) where training data is incremented (decremented) with multiple copies of the samples, until the same proportion is obtained on the minority (majority) classes. A more sophisticated approach is SMOTE oversampling which works by utilizing a k-nearest neighbour algorithm to create synthetic data from the minority class.
+
+An important reminder is to always split into test and train sets BEFORE trying oversampling techniques. Oversampling before splitting the data can allow the exact same observations to be present in both the test and train sets. This can allow our model to simply memorize specific data points and cause overfitting and poor generalization to the test data.
+
+Random oversampling simply duplicates existing minority class samples to increase their count, whereas SMOTE synthesizes new samples of the minority class based on the existing samples. In SMOTE, the algorithm selects a minority class sample and finds its k nearest neighbors in the feature space. It then generates synthetic samples by interpolating between the selected sample and one of its k nearest neighbors.
+
+The advantage of SMOTE over random oversampling is that it generates synthetic samples that are similar to the existing minority class samples, which helps to preserve the underlying structure of the minority class. This can improve the performance of machine learning algorithms compared to random oversampling, which can lead to overfitting if the minority class is simply duplicated multiple times.
+
+## Weighting
+In some cases, reweighting the dataset may provide better results than resampling techniques because it does not change the distribution of the samples in the original dataset, and it allows the model to see the true distribution of the classes.
+
+In PySpark, you can reweight the datasets for imbalanced binary classification by adjusting the class weights in the loss function used in the machine learning algorithm. This will make the model pay more attention to the minority class samples and help to balance the class distribution. The `setClassWeight` method is used to set the class weights in each model.
+```
+lr_weight = LogisticRegression(maxIter=10, elasticNetParam=1.0, regParam = 0.0001)
+lr_weight.setWeightCol('classWeightCol')
+```
+### Improved results
+- Linear regression: 
+
+| MODEL               | Baseline | Downsampling  | Upsampling | SMOTE | Weighting|
+|:-------------------:|:----:|:----:|:---------:|:----------:|:----------:|
+| Logistic Regression | 0.71| 0.70 | 0.74      | 0.76       | 0.80|
+| Random Forest | 0.50|0.56 | 0.59      | 0.63       | 0.53|
+| SVM | 0.71|0.73 | 0.70      | 0.73      | 0.74|
+| GBT Classfier | 0.50|0.48 | 0.63      | 0.63      | 0.59|
+
+
+
+
