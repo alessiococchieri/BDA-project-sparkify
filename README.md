@@ -30,7 +30,11 @@ Sparkify is a music streaming service. Just like other famous streaming services
 The tasks consist of a binary classification problem where in this case the objective is to identify clients more likely to churn. If we can identify which users are at-risk to churn, then the business can take action and potentially make them stay.
 
 # Data overview 
-The main issue of the current task is related to the high imbalanced class ratio. As it is possible to see, the positive class (churn) is only about 23% of the total data points. 
+The main issue of the current task is related to the high imbalanced class ratio. As it is possible to see from the figure below, the positive class (churn) is only about 23% of the total data points. 
+
+<p align="center">
+  <img src="img/first.png" height = 300 width = 300px>
+</p>
 
 # Evaluation metric
 Because of the high imbalanced class ratio in the data, *accuracy* is inappropriate as evaluation metric. The main reason is that the overwhelming number of examples from the majority class will overwhelm the number of examples in the minority class, meaning that even unskillful models can achieve accuracy scores of 90 percent, or 99 percent, depending on how severe the class imbalance happens to be.
@@ -112,6 +116,11 @@ Another relevant point which could affect the classification performances is the
 
 In this case, Pearson correlation has been considered. It ranges from -1 to 1, with -1 indicating a strong negative linear relationship, 0 indicating no linear relationship, and 1 indicating a strong positive linear relationship.
 The following representation shows the correlation matrix between features: since the way the matrix is constructed make it symmetric and because of the large number of features, only the heatmap of the lower diagonal matrix (the diagonal itself is excluded) is reported for a better visualization.
+
+<p align="center">
+  <img src="img/corr-matrix.png" height = 500 width = 500px>
+</p>
+
 
 There is no obvious strong predictor for `cancelled` except for `user_age`
 
