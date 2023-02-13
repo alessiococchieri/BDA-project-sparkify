@@ -152,7 +152,7 @@ To give a further proof of the linear dependence among `length`, `artist` and `s
   <img src="img/direct-corr.png">
 </p>
 
-For completness, also charts of non-strongly correlated features are reported. In particular:
+For completeness, also charts of non-strongly correlated features are reported. In particular:
 - ***interactions*** and ***total_session*** $p$ = 0.07
 - ***interactions*** and ***session_gap*** $p$ = -0.17
 - ***days_registered*** and ***total_session*** $p$ = 0.20
@@ -264,9 +264,9 @@ In a Random Forest Classifier, feature importance is a measure of the contributi
 </p>
 
 ## SVM (linear kernel)
-As happens for Logistic Regression, this method is useful in binary classification because Linear SVC models the relationship between the features and the target variable as a linear boundary, which makes it easy to visualize and interpret the relationship.
+As it happens for Logistic Regression, this method is useful in binary classification because Linear SVC models the relationship between the features and the target variable as a linear boundary, which makes it easy to visualize and interpret the relationship.
 
-In the Support Vector Classification (SVC) algorithm, the coefficients do not have an direct interpretation in the same way that they do in logistic regression. In SVC, the goal is to find the best boundary (or hyperplane) that separates the data into two classes. The coefficients in an SVC model represent the weights assigned to each feature in determining the position of this boundary.
+In the Support Vector Classification (SVC) algorithm, the coefficients do not have a direct interpretation in the same way that they do in logistic regression. In SVC, the goal is to find the best boundary (or hyperplane) that separates the data into two classes. The coefficients in an SVC model represent the weights assigned to each feature in determining the position of this boundary.
 
 
 These are the results obtained by the model:
@@ -294,7 +294,7 @@ The model does not seem to work well with a F1 score of only about 43% for the p
 </p>
 
 # GBT classifier
-Gradient Boosting Tree (GBT) classifier is an ensemble machine learning algorithm. As happens for Random Forest, it models non-linear relationships, handles large datasets efficiently and provides the feature importance scores. However, GBT classifier is generally considered more complex and slower to train respect to Random Forest because it builds the trees sequentially, whereas Random Forest builds the trees in parallel.
+Gradient Boosting Tree (GBT) classifier is an ensemble machine learning algorithm. As it happens for Random Forest, it models non-linear relationships, handles large datasets efficiently and provides the feature importance scores. However, GBT classifier is generally considered more complex and slower to train with respect to Random Forest because it builds the trees sequentially, whereas Random Forest builds the trees in parallel.
 
 These are the results obtained by the model:
 ```
@@ -327,7 +327,7 @@ In this specific case, only about 23.11% of the data are labelled as churn (labe
 
 There are several ways to address this issue with PySpark. We will focus on the following two approaches:
 
-- Resempling
+- Resampling
 - Weighting
 
 ## Resampling
