@@ -197,12 +197,18 @@ Logistic Regression is a statistical method that is commonly used for binary cla
 
 These are the results obtained by the model:
 ```
-TEST SET results:
-Precision positive class: 1.0
-Recall positive class: 0.54
-F1 positive class: 0.71
-F1 macro: 0.82
-AUC-PR: 0.83
+Precision: 0.8518518518518519
+Recall: 0.6571428571428571
+F1 positive class: 0.7419354838709677
+F1 macro: 0.8413381123058542
+AUC-PR: 0.7419646841333589 
+
+TEST results:
+Precision: 1.0
+Recall: 0.5454545454545454
+F1 positive class: 0.7058823529411764
+F1 macro: 0.8177299088649543
+AUC-PR: 0.8295454545454546
 ```
 
 ### Coefficients
@@ -222,14 +228,21 @@ It provides feature importance scores, which can be used to identify the most im
 
 These are the results obtained by the model:
 ```
-TEST SET results:
+TRAIN results:
+Precision: 1.0
+Recall: 0.6857142857142857
+F1 positive class: 0.8135593220338984
+F1 macro: 0.8866331408704291
+AUC-PR: 0.8759896729776248 
+
+TEST results:
 Precision: 0.8
-Recall: 0.36
-F1 positive class: 0.50
-F1 macro: 0.69
-AUC-PR: 0.63 
+Recall: 0.36363636363636365
+F1 positive class: 0.5000000000000001
+F1 macro: 0.6944444444444444
+AUC-PR: 0.625 
 ```
-In general the perfomances are much worse than logistic regression. This can be justified by the fact tat Random Forest is more suitable for more very large dataset where the relationship between the features and target variable is complex.  
+The model shows high overfitting and in general the perfomances are much worse than logistic regression. This can be justified by the fact tat Random Forest is more suitable for much larger dataset where the relationship between the features and target variable is complex.  
 
 ### Feature importance
 In a Random Forest Classifier, feature importance is a measure of the contribution of each feature to the prediction accuracy of the model. From the plot we can see as paid_user and downgraded are the feature with the least impact on churn prediction, while days_registered and session_gap turned out to be the most important.
@@ -246,13 +259,21 @@ In the Support Vector Classification (SVC) algorithm, the coefficients do not ha
 
 These are the results obtained by the model:
 ```
-TEST SET results:
+TRAIN results:
+Precision: 0.9090909090909091
+Recall: 0.2857142857142857
+F1 positive class: 0.43478260869565216
+F1 macro: 0.6719367588932806
+AUC-PR: 0.6597167892348615 
+
+TEST results:
 Precision: 1.0
-Recall: 0.55
-F1 positive class: 0.71
-F1 macro: 0.82
-AUC-PR: 0.83
+Recall: 0.2727272727272727
+F1 positive class: 0.42857142857142855
+F1 macro: 0.6602316602316602
+AUC-PR: 0.7272727272727273 
 ```
+The worst results so far.
 
 ### Coefficients
 `session_gap` and `total_session` have the highest impact are the most important features in determining the boundary.
@@ -262,15 +283,24 @@ AUC-PR: 0.83
 
 # GBT classifier
 Gradient Boosting Tree (GBT) classifier is an ensemble machine learning algorithm. As happens for Random Forest, it models non-linear relationships, handles large datasets efficiently and provides the feature importance scores. However GBT classifier is generally considered more complex and slower to train respect to Random Forest because it builds the trees sequentially, whereas Random Forest builds the trees in parallel.
+
+These are the results obtained by the model:
 ```
-TEST SET results:
+TRAIN results:
+Precision: 0.92
+Recall: 0.6571428571428571
+F1 positive class: 0.7666666666666667
+F1 macro: 0.8575980392156863
+AUC-PR: 0.7984302925989674 
+
+TEST results:
 Precision: 0.8
-Recall: 0.36
-F1 positive class: 0.50
-F1 macro: 0.69
-AUC-PR: 0.62
+Recall: 0.36363636363636365
+F1 positive class: 0.5000000000000001
+F1 macro: 0.6944444444444444
+AUC-PR: 0.625 
 ```
-Therefore we get the same performance as the one reached by the Random Forest classifier. 
+As Random Forest, GBT showed high overfitting. 
 
 ### Feature importance
 As we can see by the plot, GBT does not make use of `paid_user` to predict the target. 
@@ -286,7 +316,7 @@ In this specific case, only about 23.11% of the data are labelled as churn (labe
 There are several ways to address this issue with PySpark and MLlib. We will focus on the following two approaches:
 
 - Resempling
-- Cost-based function (Weighting)
+- Weighting
 
 ## Resampling
 While the obvious and most desirable solution would be to collect more real data, oversampling and undersampling are techniques that may still come in handy in these situations. For both techniques there is a naive approach that is the random oversampling (undersampling) where training data is incremented (decremented) with multiple copies of the samples, until the same proportion is obtained on the minority (majority) classes. A more sophisticated approach is SMOTE oversampling which works by utilizing a k-nearest neighbour algorithm to create synthetic data from the minority class.
@@ -304,8 +334,17 @@ In PySpark, you can reweight the datasets for imbalanced binary classification b
 lr_weight = LogisticRegression(maxIter=10, elasticNetParam=1.0, regParam = 0.0001)
 lr_weight.setWeightCol('classWeightCol')
 ```
-### Improved results
-Linear regression (test set): 
+
+## Result after handling imbalanced classes (F1 positive class on test set)
+| MODEL               | Baseline | Downsampling  | Upsampling | SMOTE | Weighting|
+|-------------------|----|----|---------|----------|----------|
+| Logistic Regression (LR) | 0.71| 0.70 | 0.74      | 0.76       | 0.80|
+| Random Forest (RF) | 0.50|0.56 | 0.59      | 0.63       | 0.53|
+| SVM | 0.71|0.73 | 0.70      | 0.73      | 0.74|
+| GBT | 0.50|0.48 | 0.63      | 0.63      | 0.59|
+
+## Overall results
+Below it is possible to see all the results obtained in all the experiments per each model.
 
 | MODEL             |  F1 | F1_macro  | Precision | Recall   | 
 |-------------------|-----|-----------|-----------|----------|
@@ -338,6 +377,30 @@ Linear regression (test set):
 | GBT + upsampling   | 0.63| 0.77      | 0.75      | 0.55     | 
 | GBT + SMOTE        | 0.63| 0.77      | 0.75      | 0.55     | 
 | GBT + weighting    | 0.59| 0.74      | 0.83      | 0.45     |
+
+Conclusion
+The study carried out so far has higlighted important aspects:
+- Logistic regression model with class weights has the strongest predicting power with f1-score for the postive class = 80%, with a precision of 88% and a recall of 72%. 
+
+- Features engineering and features selection were the most crucial phases of teh project: from the 18 original fields, we selected only the relevant measures to user behavior and created 11 features. Then we further trimmed the data down to 9 feature with unique characteristics based on their correlations to train the models.
+- 
+- Cleaning and wrangling the data properly not only improves the model performance, but also make the pipeline more operational efficient and scalable. For Sparkify mini data, we aggregated 268k event-level records to 225 user-level records, with is 0.1% size of the raw data.
+
+- RF and GBT soffered the most the low amount of data available by showing high overfitting.
+
+- Upsampling methods turned out to be the best choices for RF and GBT in order to improve their performances. In particular SMOTE allowed RF and GBT to increase its F1 score up to 62% and 63% respectively.
+
+- Both weighting and resempling were crucial for the perfomances of SVM.  
+
+# Main challenges
+- Imbalanced class ratio
+- Seasonality: The data we are using only contains two months of data, which means the analysis could be biased by seasonality.
+- Small dataset: too small number of train samples
+
+# Future works
+- Test the models with the greater version of the dataset (12GB). Probably RF and GBT would show intersting improvements in their performance due to the higher amount of data at disposal.
+- Better hyperparameters tuning
+- Better feature exctraction: with higher amount of data at disposal, a greater number of features would be necessary. 
 
 
 
