@@ -7,13 +7,19 @@
 # Apache Spark Cluster on Docker
 This project is executed in Apache Spark cluster mode with a JupyterLab interface built on top of Docker.
 
+<p align="center">
+  <img src="img/cluster-architecture.png" height = 400 width = 600px>
+</p>
+
+
 ## Cluster overview 
 | Application              | URL | Description  |
 |-------------------|----|----|
 | JuyterLab | localhost:8888| Cluster interface with built-in Jupyter notebooks | 
 | Spark Driver | localhost:4040| Spark Driver web ui | 
 | Spark Master | localhost:8080| Spark Master node | 
-| Spark Worker | localhost:8081| Spark Worker node with 5 core and 5GB of memory (default)| 
+| Spark Worker | localhost:8081| Spark Worker node with 4 core and 4GB of memory (default)| 
+| Spark Worker | localhost:8082| Spark Worker node with 4 core and 4GB of memory (default)| 
 
 ## Cluster execution
 1. Install *Docker* and *Docker Compose*
@@ -209,6 +215,59 @@ In logistic regression for binary classification, the coefficients represent the
   <img src="img/coef-lr.png" height = 300 width = 300px>
 </p>
 
+## Random Forest
+Random Forest is a powerful algorithm that can achieve high performances in binary classification problems by combining the predictions of many decision trees. The combination of trees helps to reduce overfitting and improve the generalization ability of the model.
+It provides feature importance scores, which can be used to identify the most important features in the data and help to improve the interpretability of the model. 
+
+
+These are the results obtained by the model:
+```
+TEST SET results:
+Precision: 0.8
+Recall: 0.36
+F1 positive class: 0.50
+F1 macro: 0.69
+AUC-PR: 0.63 
+```
+In general the perfomances are much worse than logistic regression. This can be justified by the fact tat Random Forest is more suitable for more very large dataset where the relationship between the features and target variable is complex.  
+
+### Feature importance
+In a Random Forest Classifier, feature importance is a measure of the contribution of each feature to the prediction accuracy of the model. From the plot we can see as paid_user and downgraded are the feature with the least impact on churn prediction, while days_registered and session_gap turned out to be the most important.
+
+## SVM (linear kernel)
+As happens for Logistic Regression, this method is useful in binary classification because Linear SVC models the relationship between the features and the target variable as a linear boundary, which makes it easy to visualize and interpret the relationship.
+
+In the Support Vector Classification (SVC) algorithm, the coefficients do not have an direct interpretation in the same way that they do in logistic regression. In SVC, the goal is to find the best boundary (or hyperplane) that separates the data into two classes. The coefficients in an SVC model represent the weights assigned to each feature in determining the position of this boundary.
+
+
+These are the results obtained by the model:
+```
+TEST SET results:
+Precision: 1.0
+Recall: 0.55
+F1 positive class: 0.71
+F1 macro: 0.82
+AUC-PR: 0.83
+```
+
+### Coefficients
+`session_gap` and `total_session` have the highest impact are the most important features in determining the boundary.
+
+#GBT classifier
+Gradient Boosting Tree (GBT) classifier is an ensemble machine learning algorithm. As happens for Random Forest, it models non-linear relationships, handles large datasets efficiently and provides the feature importance scores. However GBT classifier is generally considered more complex and slower to train respect to Random Forest because it builds the trees sequentially, whereas Random Forest builds the trees in parallel.
+```
+TEST SET results:
+Precision: 0.8
+Recall: 0.36
+F1 positive class: 0.50
+F1 macro: 0.69
+AUC-PR: 0.62
+```
+Therefore we get the same performance as the one reached by the Random Forest classifier. 
+
+### Feature importance
+As we can see by the plot, GBT does not make use of `paid_user` to predict the target. 
+
 # Handling imbalanced class ratio to improve the results
 Handling imbalanced datasets is a common challenge in machine learning. When dealing with significantly unbalanced dataset in the target label, it becomes harder for most machine learning algorithms to efficiently learn all classes. The training process might be indeed biased towards a certain class if the dataset distribution is poorly balanced.
 
@@ -237,14 +296,15 @@ lr_weight = LogisticRegression(maxIter=10, elasticNetParam=1.0, regParam = 0.000
 lr_weight.setWeightCol('classWeightCol')
 ```
 ### Improved results
-- Linear regression: 
+Linear regression (test set): 
 
-| MODEL               | Baseline | Downsampling  | Upsampling | SMOTE | Weighting|
-|:-------------------:|:----:|:----:|:---------:|:----------:|:----------:|
-| Logistic Regression | 0.71| 0.70 | 0.74      | 0.76       | 0.80|
-| Random Forest | 0.50|0.56 | 0.59      | 0.63       | 0.53|
-| SVM | 0.71|0.73 | 0.70      | 0.73      | 0.74|
-| GBT Classfier | 0.50|0.48 | 0.63      | 0.63      | 0.59|
+| MODEL             |  F1 | F1_macro  | Precision | Recall   | AUC-PR   |
+|-------------------|-----|-----------|-----------|----------|----------|
+| LR                | 0.71| 0.82      | 1.0       | 0.54     | 0.83     |
+| LR + downsampling | 0.69| 0.79      | 0.67      | 0.73     | 0.61     |
+| LR + upsampling   | 0.74| 0.83      | 0.87      | 0.64     | 0.76     |
+| LR + SMOTE        | 0.76| 0.84      | 0.80      | 0.72     | 0.73     |
+| LR + weighting    | 0.80| 0.87      | 0.88      | 0.73     | 0.80     |
 
 
 
