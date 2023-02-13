@@ -1,4 +1,4 @@
-# BDA project - Sparkify
+# BDA project Report- Sparkify
 
 - **Student:** Alessio Cocchieri
 - **Matricola:** 0001046067
