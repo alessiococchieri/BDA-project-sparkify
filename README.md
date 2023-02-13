@@ -18,15 +18,25 @@ This project is executed in Apache Spark cluster mode with a JupyterLab interfac
 | JuyterLab | localhost:8888| Cluster interface with built-in Jupyter notebooks | 
 | Spark Driver | localhost:4040| Spark Driver web ui | 
 | Spark Master | localhost:8080| Spark Master node | 
-| Spark Worker | localhost:8081| Spark Worker node with 4 core and 4GB of memory (default)| 
-| Spark Worker | localhost:8082| Spark Worker node with 4 core and 4GB of memory (default)| 
+| Spark Worker | localhost:8081| Spark Worker node with 2 core and 4GB of memory (default)| 
+| Spark Worker | localhost:8082| Spark Worker node with 2 core and 4GB of memory (default)| 
 
 ## Cluster execution
 1. Install *Docker* and *Docker Compose*
 2. Download the docker-compose file
 3. Edit the file with the preferred setup
 4. Run the cluster: <code> docker-compose up </code>
+5. Run the following command inside the notebook:
+```
+from pyspark.sql import SparkSession
 
+spark = SparkSession.\
+        builder.\
+        appName("sparkify").\
+        master("spark://spark-master:7077").\
+        config("spark.executor.memory", "5120m").\
+        getOrCreate()
+```
 # Dataset
 The dataset consists of **286500 patterns** and **18 features** related to typical user activity on Sparkify platform.
 Sparkify is a music streaming service. Just like other famous streaming services (e.g. Spotify), users can choose free tier subscription with ads or paid tier without ads. They are free to upgrade, downgrade, or cancel their subscription plan.
@@ -153,7 +163,7 @@ For completness, also charts of non-strongly correlated features are reported. I
 # Outliers removal
 There is a particular category of users to consider before making inference: the users whose total session is equal to 1. They are probably new users just entered in the application and their session_gap is indeed equal to NaN.  However, here we are trying to predict people who used to be an active user but decides to leave. For this reason, they are out of the scope of our analysis and we will exclude them from the prediction.
 
-# Modeling (features preparation)
+# Features preparation
 Features must be prepared in the right way in order to be fed to the model. In this regards, a couple of futher steps are needed:
 
 - **Assembling**: for each reacord, its features must be assembled in a unique array. Pyspark provides the function VectorAssembler() which takes as input the features selected and the name of the column which will contain their assembling. Indeed, the function creates an array which aggregates all the features toghether.
@@ -242,7 +252,7 @@ F1 positive class: 0.5000000000000001
 F1 macro: 0.6944444444444444
 AUC-PR: 0.625 
 ```
-The model shows high overfitting and in general the perfomances are much worse than logistic regression. This can be justified by the fact tat Random Forest is more suitable for much larger dataset where the relationship between the features and target variable is complex.  
+The model shows high overfitting and in general the perfomances are much worse than logistic regression. This can be justified by the fact that Random Forest is more suitable for much larger dataset where the relationship between the features and target variable is complex.  
 
 ### Feature importance
 In a Random Forest Classifier, feature importance is a measure of the contribution of each feature to the prediction accuracy of the model. From the plot we can see as paid_user and downgraded are the feature with the least impact on churn prediction, while days_registered and session_gap turned out to be the most important.
@@ -273,7 +283,7 @@ F1 positive class: 0.42857142857142855
 F1 macro: 0.6602316602316602
 AUC-PR: 0.7272727272727273 
 ```
-The worst results so far.
+The model does not seem to work well with a F1 score of only about 43% for the positive class.
 
 ### Coefficients
 `session_gap` and `total_session` have the highest impact are the most important features in determining the boundary.
@@ -282,7 +292,7 @@ The worst results so far.
 </p>
 
 # GBT classifier
-Gradient Boosting Tree (GBT) classifier is an ensemble machine learning algorithm. As happens for Random Forest, it models non-linear relationships, handles large datasets efficiently and provides the feature importance scores. However GBT classifier is generally considered more complex and slower to train respect to Random Forest because it builds the trees sequentially, whereas Random Forest builds the trees in parallel.
+Gradient Boosting Tree (GBT) classifier is an ensemble machine learning algorithm. As happens for Random Forest, it models non-linear relationships, handles large datasets efficiently and provides the feature importance scores. However, GBT classifier is generally considered more complex and slower to train respect to Random Forest because it builds the trees sequentially, whereas Random Forest builds the trees in parallel.
 
 These are the results obtained by the model:
 ```
@@ -300,7 +310,7 @@ F1 positive class: 0.5000000000000001
 F1 macro: 0.6944444444444444
 AUC-PR: 0.625 
 ```
-As Random Forest, GBT showed high overfitting. 
+As Random Forest, GBT shows high overfitting. 
 
 ### Feature importance
 As we can see by the plot, GBT does not make use of `paid_user` to predict the target. 
@@ -313,7 +323,7 @@ Handling imbalanced datasets is a common challenge in machine learning. When dea
 
 In this specific case, only about 23.11% of the data are labelled as churn (label=1).
 
-There are several ways to address this issue with PySpark and MLlib. We will focus on the following two approaches:
+There are several ways to address this issue with PySpark. We will focus on the following two approaches:
 
 - Resempling
 - Weighting
@@ -340,7 +350,7 @@ lr_weight.setWeightCol('classWeightCol')
 |-------------------|----|----|---------|----------|----------|
 | Logistic Regression (LR) | 0.71| 0.70 | 0.74      | 0.76       | 0.80|
 | Random Forest (RF) | 0.50|0.56 | 0.59      | 0.63       | 0.53|
-| SVM | 0.71|0.73 | 0.70      | 0.73      | 0.74|
+| SVM | 0.42|0.69 | 0.70      | 0.73      | 0.74|
 | GBT | 0.50|0.48 | 0.63      | 0.63      | 0.59|
 
 ## Overall results
@@ -364,8 +374,8 @@ Below it is possible to see all the results obtained in all the experiments per 
 
 | MODEL              |  F1 | F1_macro  | Precision | Recall   |
 |--------------------|-----|-----------|-----------|----------|
-| SVM                | 0.71| 0.82      | 1.0       | 0.54     | 
-| SVM + downsampling | 0.73| 0.82      | 0.73      | 0.73     | 
+| SVM                | 0.42| 0.66      | 1.0       | 0.27     | 
+| SVM + downsampling | 0.69| 0.79      | 0.67      | 0.73     | 
 | SVM + upsampling   | 0.70| 0.81      | 0.78      | 0.63     | 
 | SVM + SMOTE        | 0.73| 0.82      | 0.73      | 0.73     | 
 | SVM + weighting    | 0.74| 0.83      | 0.88      | 0.63     |
@@ -378,12 +388,12 @@ Below it is possible to see all the results obtained in all the experiments per 
 | GBT + SMOTE        | 0.63| 0.77      | 0.75      | 0.55     | 
 | GBT + weighting    | 0.59| 0.74      | 0.83      | 0.45     |
 
-Conclusion
+# Conclusion
 The study carried out so far has higlighted important aspects:
 - Logistic regression model with class weights has the strongest predicting power with f1-score for the postive class = 80%, with a precision of 88% and a recall of 72%. 
 
-- Features engineering and features selection were the most crucial phases of teh project: from the 18 original fields, we selected only the relevant measures to user behavior and created 11 features. Then we further trimmed the data down to 9 feature with unique characteristics based on their correlations to train the models.
-- 
+- Features engineering and features selection were the most crucial phases of the project: from the 18 original fields, we selected only the relevant measures to user behavior and created 11 features. Then we further trimmed the data down to 9 feature with unique characteristics based on their correlations to train the models.
+
 - Cleaning and wrangling the data properly not only improves the model performance, but also make the pipeline more operational efficient and scalable. For Sparkify mini data, we aggregated 268k event-level records to 225 user-level records, with is 0.1% size of the raw data.
 
 - RF and GBT soffered the most the low amount of data available by showing high overfitting.
@@ -392,7 +402,7 @@ The study carried out so far has higlighted important aspects:
 
 - Both weighting and resempling were crucial for the perfomances of SVM.  
 
-# Main challenges
+# Main challenges encountered
 - Imbalanced class ratio
 - Seasonality: The data we are using only contains two months of data, which means the analysis could be biased by seasonality.
 - Small dataset: too small number of train samples
