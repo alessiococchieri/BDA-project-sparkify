@@ -392,13 +392,13 @@ Below it is possible to see all the results obtained in all the experiments per 
 
 # Conclusion
 The study carried out so far has higlighted important aspects:
-- Logistic regression model with class weights has the strongest predicting power with f1-score for the postive class = 80%, with a precision of 88% and a recall of 72%. 
+- Logistic regression model with class weights has the strongest predicting power with 80% f1-score for the postive class, and with a precision of 88% and a recall of 72%. 
 
 - Features engineering and features selection were the most crucial phases of the project: from the 18 original fields, we selected only the relevant measures to user behavior and created 11 features. Then we further trimmed the data down to 9 feature with unique characteristics based on their correlations to train the models.
 
 - Cleaning and wrangling the data properly not only improves the model performance, but also make the pipeline more operational efficient and scalable. For Sparkify mini data, we aggregated 268k event-level records to 225 user-level records, which is 0.1% size of the raw data.
 
-- RF and GBT soffered the most the low amount of data available by showing high overfitting.
+- RF and GBT suffered the most the low amount of data available by showing high overfitting.
 
 - Upsampling methods turned out to be the best choices for RF and GBT in order to improve their performances. In particular SMOTE allowed RF and GBT to increase its F1 score up to 62% and 63% respectively.
 
