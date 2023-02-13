@@ -234,6 +234,10 @@ In general the perfomances are much worse than logistic regression. This can be 
 ### Feature importance
 In a Random Forest Classifier, feature importance is a measure of the contribution of each feature to the prediction accuracy of the model. From the plot we can see as paid_user and downgraded are the feature with the least impact on churn prediction, while days_registered and session_gap turned out to be the most important.
 
+<p align="center">
+  <img src="img/rf-feat.png" height = 300 width = 300px>
+</p>
+
 ## SVM (linear kernel)
 As happens for Logistic Regression, this method is useful in binary classification because Linear SVC models the relationship between the features and the target variable as a linear boundary, which makes it easy to visualize and interpret the relationship.
 
@@ -252,8 +256,11 @@ AUC-PR: 0.83
 
 ### Coefficients
 `session_gap` and `total_session` have the highest impact are the most important features in determining the boundary.
+<p align="center">
+  <img src="img/svm-coef.png" height = 300 width = 300px>
+</p>
 
-#GBT classifier
+# GBT classifier
 Gradient Boosting Tree (GBT) classifier is an ensemble machine learning algorithm. As happens for Random Forest, it models non-linear relationships, handles large datasets efficiently and provides the feature importance scores. However GBT classifier is generally considered more complex and slower to train respect to Random Forest because it builds the trees sequentially, whereas Random Forest builds the trees in parallel.
 ```
 TEST SET results:
@@ -267,6 +274,9 @@ Therefore we get the same performance as the one reached by the Random Forest cl
 
 ### Feature importance
 As we can see by the plot, GBT does not make use of `paid_user` to predict the target. 
+<p align="center">
+  <img src="img/gbt-feat.png" height = 300 width = 300px>
+</p>
 
 # Handling imbalanced class ratio to improve the results
 Handling imbalanced datasets is a common challenge in machine learning. When dealing with significantly unbalanced dataset in the target label, it becomes harder for most machine learning algorithms to efficiently learn all classes. The training process might be indeed biased towards a certain class if the dataset distribution is poorly balanced.
@@ -281,13 +291,12 @@ There are several ways to address this issue with PySpark and MLlib. We will foc
 ## Resampling
 While the obvious and most desirable solution would be to collect more real data, oversampling and undersampling are techniques that may still come in handy in these situations. For both techniques there is a naive approach that is the random oversampling (undersampling) where training data is incremented (decremented) with multiple copies of the samples, until the same proportion is obtained on the minority (majority) classes. A more sophisticated approach is SMOTE oversampling which works by utilizing a k-nearest neighbour algorithm to create synthetic data from the minority class.
 
+Random oversampling simply duplicates existing minority class samples to increase their count, whereas SMOTE synthesizes new samples of the minority class based on the existing samples. The advantage of SMOTE over random oversampling is that it generates synthetic samples that are similar to the existing minority class samples, which helps to preserve the underlying structure of the minority class. This can improve the performance of machine learning algorithms compared to random oversampling, which can lead to overfitting if the minority class is simply duplicated multiple times.
+
 An important reminder is to always split into test and train sets BEFORE trying oversampling techniques. Oversampling before splitting the data can allow the exact same observations to be present in both the test and train sets. This can allow our model to simply memorize specific data points and cause overfitting and poor generalization to the test data.
 
-Random oversampling simply duplicates existing minority class samples to increase their count, whereas SMOTE synthesizes new samples of the minority class based on the existing samples. In SMOTE, the algorithm selects a minority class sample and finds its k nearest neighbors in the feature space. It then generates synthetic samples by interpolating between the selected sample and one of its k nearest neighbors.
-
-The advantage of SMOTE over random oversampling is that it generates synthetic samples that are similar to the existing minority class samples, which helps to preserve the underlying structure of the minority class. This can improve the performance of machine learning algorithms compared to random oversampling, which can lead to overfitting if the minority class is simply duplicated multiple times.
-
 ## Weighting
+The samples from the minority class can be weighted more heavily to balance the contribution of each class in the training process.
 In some cases, reweighting the dataset may provide better results than resampling techniques because it does not change the distribution of the samples in the original dataset, and it allows the model to see the true distribution of the classes.
 
 In PySpark, you can reweight the datasets for imbalanced binary classification by adjusting the class weights in the loss function used in the machine learning algorithm. This will make the model pay more attention to the minority class samples and help to balance the class distribution. The `setClassWeight` method is used to set the class weights in each model.
@@ -298,13 +307,41 @@ lr_weight.setWeightCol('classWeightCol')
 ### Improved results
 Linear regression (test set): 
 
-| MODEL             |  F1 | F1_macro  | Precision | Recall   | AUC-PR   |
-|-------------------|-----|-----------|-----------|----------|----------|
-| LR                | 0.71| 0.82      | 1.0       | 0.54     | 0.83     |
-| LR + downsampling | 0.69| 0.79      | 0.67      | 0.73     | 0.61     |
-| LR + upsampling   | 0.74| 0.83      | 0.87      | 0.64     | 0.76     |
-| LR + SMOTE        | 0.76| 0.84      | 0.80      | 0.72     | 0.73     |
-| LR + weighting    | 0.80| 0.87      | 0.88      | 0.73     | 0.80     |
+| MODEL             |  F1 | F1_macro  | Precision | Recall   | 
+|-------------------|-----|-----------|-----------|----------|
+| LR                | 0.71| 0.82      | 1.0       | 0.54     | 
+| LR + downsampling | 0.69| 0.79      | 0.67      | 0.73     | 
+| LR + upsampling   | 0.74| 0.83      | 0.87      | 0.64     |  
+| LR + SMOTE        | 0.76| 0.84      | 0.80      | 0.72     |
+| LR + weighting    | 0.80| 0.87      | 0.88      | 0.73     |
+
+| MODEL             |  F1 | F1_macro  | Precision | Recall   |
+|-------------------|-----|-----------|-----------|----------|
+| RF                | 0.50| 0.70      | 0.80      | 0.36     | 
+| RF + downsampling | 0.56| 0.69      | 0.50      | 0.64     | 
+| RF + upsampling   | 0.59| 0.74      | 0.83      | 0.45     | 
+| RF + SMOTE        | 0.62| 0.77      | 1.0       | 0.45     | 
+| RF + weighting    | 0.53| 0.71      | 1.0       | 0.36     |
+
+| MODEL              |  F1 | F1_macro  | Precision | Recall   |
+|--------------------|-----|-----------|-----------|----------|
+| SVM                | 0.71| 0.82      | 1.0       | 0.54     | 
+| SVM + downsampling | 0.73| 0.82      | 0.73      | 0.73     | 
+| SVM + upsampling   | 0.70| 0.81      | 0.78      | 0.63     | 
+| SVM + SMOTE        | 0.73| 0.82      | 0.73      | 0.73     | 
+| SVM + weighting    | 0.74| 0.83      | 0.88      | 0.63     |
+
+| MODEL              |  F1 | F1_macro  | Precision | Recall   |
+|--------------------|-----|-----------|-----------|----------|
+| GBT                | 0.50| 0.69      | 0.80      | 0.36     | 
+| GBT + downsampling | 0.48| 0.59      | 0.36      | 0.72     | 
+| GBT + upsampling   | 0.63| 0.77      | 0.75      | 0.55     | 
+| GBT + SMOTE        | 0.63| 0.77      | 0.75      | 0.55     | 
+| GBT + weighting    | 0.59| 0.74      | 0.83      | 0.45     |
+
+
+
+
 
 
 
