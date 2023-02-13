@@ -205,3 +205,6 @@ In logistic regression for binary classification, the coefficients represent the
 - session_gap, total_sessiom and interactions are inversely correlated with the probability of churn, so the higher their value, the less the probability of the client to churn
 - On the other hand, the length and the typology of the user turned out to be features directly correlated with the probability of being a churn.
 
+<p align="center">
+  <img src="img/coef-lr.png" height = 300 width = 300px>
+</p>
