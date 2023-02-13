@@ -40,10 +40,12 @@ spark = SparkSession.\
 # Dataset
 The dataset consists of **286500 patterns** and **18 features** related to typical user activity on Sparkify platform.
 Sparkify is a music streaming service. Just like other famous streaming services (e.g. Spotify), users can choose free tier subscription with ads or paid tier without ads. They are free to upgrade, downgrade, or cancel their subscription plan.
- 
+
+The dataset can be downloaded at the following link: 
+https://drive.google.com/file/d/1HidalTO6cNEhaCS-JGrAQLquU01WGJPF/view?usp=share_link
 
 # Task
-The tasks consist of a binary classification problem where in this case the objective is to identify clients more likely to churn. If we can identify which users are at-risk to churn, then the business can take action and potentially make them stay.
+The task consists of a binary classification problem where in this case the objective is to identify clients more likely to churn. If we can identify which users are at-risk to churn, then the business can take action and potentially make them stay.
 
 # Data overview 
 The main issue of the current task is related to the high imbalanced class ratio. From the data it is possible to identify 225 **distinct users**. As shown in the figure below, the positive class (churn) is only about 23% of the total data points. 
