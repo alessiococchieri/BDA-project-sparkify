@@ -400,7 +400,7 @@ The study carried out so far has higlighted important aspects:
 
 - RF and GBT suffered the most the low amount of data available by showing high overfitting.
 
-- Upsampling methods turned out to be the best choices for RF and GBT in order to improve their performances. In particular SMOTE allowed RF and GBT to increase its F1 score up to 62% and 63% respectively.
+- Upsampling methods turned out to be the best choices for RF and GBT in order to improve their performances. In particular SMOTE allowed RF and GBT to increase their F1 score up to 62% and 63% respectively.
 
 - Both weighting and resempling were crucial for the perfomances of SVM model.  
 
@@ -410,9 +410,9 @@ The study carried out so far has higlighted important aspects:
 - Small dataset: too small number of train samples
 
 # Future works
-- Test the models with the greater version of the dataset (12GB). Probably RF and GBT would show intersting improvements in their performance due to the higher amount of data at disposal.
+- Test the models with the greater version of the dataset (12GB). Probably RF and GBT would show interesting improvements in their performance due to the higher amount of data at disposal.
 - Better hyperparameters tuning
-- Better feature exctraction: with higher amount of data at disposal, a greater number of features would be necessary. 
+- Better feature extraction: with higher amount of data at disposal, a greater number of features would be necessary. 
 
 
 
