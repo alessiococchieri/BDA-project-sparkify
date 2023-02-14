@@ -288,7 +288,7 @@ AUC-PR: 0.7272727272727273
 The model does not seem to work well with a F1 score of only about 43% for the positive class.
 
 ### Coefficients
-`session_gap` and `total_session` have the highest impact are the most important features in determining the boundary.
+`session_gap` and `total_session` have the highest impact and are the most important features in determining the boundary.
 <p align="center">
   <img src="img/svm-coef.png" height = 300 width = 300px>
 </p>
