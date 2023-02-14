@@ -143,7 +143,7 @@ The following representation shows the correlation matrix between features: sinc
 </p>
 
 
-There is no obvious strong predictor for `cancelled` except for `user_age`
+There is no obvious strong predictor for `cancelled` except for `days_registered`
 
 `songs`, `interactions`, `thumbs_up`, `length`, `artists` are very similar according to the histograms. Although they all show high correlation with each other, this is possibly caused by the small dataset (225 users). If we have more data, we might see more variance in user behaviors. Therefore, we will **only exclude songs and artists** as they will always be similar to length.
 
